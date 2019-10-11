@@ -13,12 +13,17 @@ using namespace std;
 //NOTE: also make sure you save patron and book data to disk any time you make a change to them
 //NOTE: for files where data is stored see constants.h BOOKFILE and PATRONFILE
 
+vector<book> books;
+vector<patron> patrons;
+
 /*
  * clear books and patrons containers
  * then reload them from disk 
  */
 void reloadAllData(){
-
+	books.clear();
+	patrons.clear();
+	//TODO Reload them to disk
 }
 
 /* checkout a book to a patron
@@ -58,6 +63,11 @@ int checkout(int bookid, int patronid){
  * 		   BOOK_NOT_IN_COLLECTION
  */
 int checkin(int bookid){
+	for (book x : books) {
+		if (bookid == x.book_id) {
+
+		}
+	}
 	return SUCCESS;
 }
 
