@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <list>
+
 using namespace std;
 /* clears, then loads books from the file filename
  * returns  COULD_NOT_OPEN_FILE if cannot open filename
@@ -19,11 +21,16 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 	}
 
 	string line;
-	while (getline(file, line)) {
-		//TODO how to parse through line??
-	}
+	string token;
+//	Data myData;
+//	while (getline(file, line)) {
+//		//TODO how to parse through line??
+//	}
+//
+//	return SUCCESS;
+	while (!filename.eof()) {
 
-	return SUCCESS;
+	}
 }
 
 /* serializes books to the file filename
@@ -40,6 +47,17 @@ int saveBooks(std::vector<book> &books, const char *filename) {
 	file.open(filename, ios::out);
 	if (!file.is_open()) {
 		return COULD_NOT_OPEN_FILE;
+	}
+
+	string bookData = "";
+
+	for (int i = 0; i < books.size(); i++) {
+		bookData = to_string(books[i].book_id) + "," + books[i].title + "," + books[i].author + "," + to_string(books[i].state) + "," + to_string(books[i].loaned_to_patron_id);
+		file << bookData << endl;
+	}
+
+	if (file.is_open()) {
+		file.close();
 	}
 
 	return SUCCESS;
