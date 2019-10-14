@@ -48,6 +48,26 @@ void reloadAllData(){
  *         TOO_MANY_OUT patron has the max number of books allowed checked out
  */
 int checkout(int bookid, int patronid){
+	reloadAllData();
+
+	for (patron y : patrons) {
+		if (y.patron_id == patronid) {
+			for (book x : books) {
+				if (x.book_id == bookid) {
+					if (!y.number_books_checked_out == MAX_BOOKS_ALLOWED_OUT) {
+						x.loaned_to_patron_id = y.patron_id;
+						x.state = OUT;
+						savePatrons(patrons, PATRONFILE.c_str());
+						saveBooks(books, BOOKFILE.c_str());
+					}
+					return TOO_MANY_OUT;
+				}
+				return BOOK_NOT_IN_COLLECTION;
+			}
+		}
+		return PATRON_NOT_ENROLLED;
+	}
+
 	return SUCCESS;
 }
 
@@ -68,10 +88,20 @@ int checkin(int bookid){
 
 	for (book x : books) {
 		if (bookid == x.book_id) {
-
+			int Id = x.loaned_to_patron_id;
+			for (patron y : patrons) {
+				if (y.patron_id == Id) {
+					y.number_books_checked_out -= 1;
+					x.loaned_to_patron_id = NO_ONE;
+					x.state = IN;
+					savePatrons(patrons, PATRONFILE.c_str());
+					saveBooks(books, BOOKFILE.c_str());
+					return SUCCESS;
+				}
+			}
 		}
 	}
-	return SUCCESS;
+	return BOOK_NOT_IN_COLLECTION;
 }
 
 /*
@@ -84,7 +114,16 @@ int checkin(int bookid){
  *    the patron_id of the person added
  */
 int enroll(std::string &name){
-	return 0;
+	reloadAllData();
+
+	patron person;
+	person.name = name;
+	person.number_books_checked_out = NONE;
+	person.patron_id = patrons.size();
+	patrons.push_back(person);
+	savePatrons(patrons, PATRONFILE.c_str());
+
+	return person.patron_id;
 }
 
 /*
@@ -134,12 +173,11 @@ int whatIsPatronName(std::string &name,int patronid){
 
 	for (patron x : patrons) {
 		if (patronid == x.patron_id) {
-			if (name == x.name) {
-				return SUCCESS;
-			}
+			name = x.name;
+			return SUCCESS;
 		}
 	}
 
-	return SUCCESS; //TODO change success back to PATRON_NOT_ENROLLED
+	return PATRON_NOT_ENROLLED;
 }
 
