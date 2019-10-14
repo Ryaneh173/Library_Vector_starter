@@ -54,9 +54,10 @@ int checkout(int bookid, int patronid){
 		if (y.patron_id == patronid) {
 			for (book x : books) {
 				if (x.book_id == bookid) {
-					if (!y.number_books_checked_out == MAX_BOOKS_ALLOWED_OUT) {
+					if (!y.number_books_checked_out >= MAX_BOOKS_ALLOWED_OUT) {
 						x.loaned_to_patron_id = y.patron_id;
 						x.state = OUT;
+						y.number_books_checked_out += 1;
 						savePatrons(patrons, PATRONFILE.c_str());
 						saveBooks(books, BOOKFILE.c_str());
 					}
